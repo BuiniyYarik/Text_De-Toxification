@@ -1,4 +1,4 @@
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, recall_score, precision_score, f1_score
 from torch.cuda.amp import GradScaler, autocast
 from tqdm.auto import tqdm
 import torch
@@ -6,6 +6,16 @@ import torch
 
 def train_model(model, train_loader, optimizer, scheduler, epochs=1,
                 accumulation_steps=4, model_save_path='../models/bert_for_sequence_classification'):
+    """
+    Train the model
+    :param model: Model to train
+    :param train_loader: Training data loader
+    :param optimizer: Optimizer to use for training
+    :param scheduler: Learning rate scheduler
+    :param epochs: Number of epochs to train for
+    :param accumulation_steps: Accumulate gradients over multiple steps
+    :param model_save_path: Path to save the model
+    """
 
     # Move the model to the GPU if available
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -51,6 +61,12 @@ def train_model(model, train_loader, optimizer, scheduler, epochs=1,
 
 
 def evaluate_model(model, val_loader):
+    """
+    Evaluate the model
+    :param model: Model to evaluate
+    :param val_loader: Validation data loader
+    :return: Metrics of the model evaluation
+    """
     # Set the model to evaluation mode
     model.eval()
     val_predictions = []
@@ -75,4 +91,17 @@ def evaluate_model(model, val_loader):
     # Calculate the accuracy
     accuracy = accuracy_score(val_true_labels, val_predictions)
     print(f'Validation Accuracy: {accuracy}')
-    return accuracy
+
+    # Calculate the recall
+    recall = recall_score(val_true_labels, val_predictions)
+    print(f'Validation Recall: {recall}')
+
+    # Calculate the precision
+    precision = precision_score(val_true_labels, val_predictions)
+    print(f'Validation Precision: {precision}')
+
+    # Calculate the F1 score
+    f1 = f1_score(val_true_labels, val_predictions)
+    print(f'Validation F1: {f1}')
+
+    return accuracy, recall, precision, f1

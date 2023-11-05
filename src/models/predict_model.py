@@ -4,6 +4,11 @@ import torch
 
 class TextDetoxifier:
     def __init__(self, model_path, tokenizer='bert-base-uncased'):
+        """
+        Initialize the TextDetoxifier class
+        :param model_path: Path to the model
+        :param tokenizer: Tokenizer to use
+        """
         self.tokenizer = BertTokenizer.from_pretrained(tokenizer)
         self.model = BertForSequenceClassification.from_pretrained(model_path)
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -11,6 +16,11 @@ class TextDetoxifier:
         self.model.eval()  # Set the model to evaluation mode
 
     def predict(self, texts):
+        """
+        Predict the toxicity of the input text
+        :param texts: Text to predict
+        :return: Predicted toxicity of the text
+        """
         # Ensure that texts is a list of strings
         if isinstance(texts, str):
             texts = [texts]
